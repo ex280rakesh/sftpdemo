@@ -1,0 +1,71 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: AWS CloudFormation template to create an EKS Cluster and its associated NodeGroup.
+Parameters:
+  EKSClusterName:
+    Description: Name of the EKS Cluster
+    Type: String
+    Default: MyEKSCluster
+
+  EKSNodeGroupName:
+    Description: Name of the EKS Node Group
+    Type: String
+    Default: MyEKSNodeGroup
+
+Resources:
+  EKSClusterIAMRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      RoleName: EKS-Cluster-Role
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: eks.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonEKSClusterPolicy
+
+  EKSNodeRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: EKS-NodeGroup-Role
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ec2.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy
+        - arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy
+        - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+        
+  EKSCluster:
+    Type: AWS::EKS::Cluster
+    Properties:
+      Name: !Ref EKSClusterName
+      Version: "1.26"
+      RoleArn: !GetAtt EKSClusterIAMRole.Arn
+      ResourcesVpcConfig:
+        SubnetIds:
+          - !ImportValue PublicSubnet1Id
+          - !ImportValue PublicSubnet2Id
+          - !ImportValue PrivateSubnet1Id
+          - !ImportValue PrivateSubnet2Id
+
+  MyNodeGroup:
+    Type: AWS::EKS::Nodegroup
+    DependsOn: EKSCluster
+    Properties:
+      ClusterName: !Ref EKSClusterName
+      NodegroupName: !Ref EKSNodeGroupName
+      NodeRole: !GetAtt EKSNodeRole.Arn
+      Subnets:
+        - !ImportValue PublicSubnet1Id
+        - !ImportValue PublicSubnet2Id
+      ScalingConfig:
+        DesiredSize: 2
+        MinSize: 2
+        MaxSize: 2

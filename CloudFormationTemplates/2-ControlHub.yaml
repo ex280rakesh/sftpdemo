@@ -1,0 +1,121 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: 'AWS CloudFormation template to create Control Hub. Dependent on CFT = Network.yaml'
+Parameters:
+  StackName:
+    Description: Name of the Stack
+    Type: String    
+    Default: Demonstration
+  Environment:
+    Description: Environment - dev/test/prod
+    Type: String 
+    Default: dev
+  InstanceType:
+    Type: String
+    Description: EC2 instance type - t2.micro, m5.large etc.
+    Default: t2.micro
+  AMI:
+    Type: String
+    Description: EC2 AMI ID (RHEL8)
+    Default: ami-031711279ded7adf0
+  EBSVolumeSize:
+    Type: String
+    Description: Size of the EBS volume in GB
+    Default: 20
+  EBSVolumeType:
+    Type: String
+    Description: Type of the EBS volume (gp2/gp3/io1/sc1/st1)
+    Default: gp2
+
+Resources:
+  MySecurityGroup2:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Join [ "-", [ !Ref StackName, "SFTP-SG2" ] ]
+      GroupDescription: "Security Group for EC2 instance"
+      VpcId: !ImportValue VPCId
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+
+
+  ControlHubIAMRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      RoleName: Control-Hub-Role
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ec2.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/PowerUserAccess
+          
+  EC2InstanceProfile:
+    Type: 'AWS::IAM::InstanceProfile'
+    Properties:
+      Path: /
+      Roles:
+        - !Ref ControlHubIAMRole
+
+  EC2ControlInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: !Ref InstanceType
+      ImageId: !Ref AMI
+      IamInstanceProfile: !Ref EC2InstanceProfile
+      KeyName: Demonstration-sftp-keypair
+      Tags:
+        - Key: Name
+          Value: !Join [ "-", [ !Ref StackName, "ControlServer" ] ]
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: Region
+          Value: !Ref 'AWS::Region'
+      UserData:
+        Fn::Base64: 
+          !Sub |    
+            #!/bin/bash
+
+            #Setup
+            yum install -y unzip
+            mkdir -p /tools
+            cd /tools
+
+            #Install AWS CLI
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            ./aws/install
+
+            #Install EKSCTL
+            # for ARM systems, set ARCH to: `arm64`, `armv6` or `armv7`
+            ARCH=amd64
+            PLATFORM=$(uname -s)_$ARCH
+            curl -sLO "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$PLATFORM.tar.gz"
+            tar -xzf eksctl_$PLATFORM.tar.gz -C /tools
+            chmod +x ./eksctl
+
+            #Install KUBECTL
+            curl -O https://s3.us-west-2.amazonaws.com/amazon-eks/1.26.4/2023-05-11/bin/linux/$ARCH/kubectl
+            chmod +x ./kubectl
+            echo 'export PATH=/tools:$PATH' >> /home/ec2-user/.bashrc
+
+            #Install CONTAINER TOOLS
+            yum module enable -y container-tools:rhel8
+            yum module install -y container-tools:rhel8
+
+      NetworkInterfaces:
+        - AssociatePublicIpAddress: true
+          DeviceIndex: '0'
+          SubnetId: !ImportValue PublicSubnet2Id
+          GroupSet:
+            - !Ref MySecurityGroup2
+      BlockDeviceMappings:
+        - DeviceName: /dev/xvda
+          Ebs:
+            VolumeSize: !Ref EBSVolumeSize
+            VolumeType: !Ref EBSVolumeType
+            DeleteOnTermination: "true"
