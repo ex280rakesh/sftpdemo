@@ -1,7 +1,9 @@
 # Repository for Blog - Enable SFTP Integration for Containerized Apps on AWS
 
+
+
 ## Cloud Formation Templates 
-The followingto create the basic stack requried for replicating the scenario
+The following templates can be used to create the basic stack requried for replicating the scenario
 
 Please execute the following Cloud Formation Templates(CFT) in respective order.
 
@@ -21,13 +23,35 @@ This will create 2 SFTP Servers on with Public IP address. Once the stack is cre
 
 ### CloudFormationTemplates/5-EKSCluster.yaml
 Execute this from the ControlHub Server for straightforward usage with EKSCTL and KUBECTL Commands.
+
+>  aws cloudformation create-stack --stack-name Demo-EKSCluster-Stack \
+ --template-body file://5-EKSCluster.yaml --capabilities CAPABILITY_NAMED_IAM
+
+
 This will create the EKS Cluster and the EKS NodeGroups. Once the stack is created, execute the following commands to complete the setup.
 > 
+
+kubectl create namespace mysftpdemo-ns
+
+eksctl create iamserviceaccount --name my-eks-cluster-sa \
+ --namespace sftpbatchjob-ns --cluster myekscluster --role-name "EKS-secrets-role" \ 
+--attach-policy-arn arn:aws:iam::aws:policy/SecretsManagerReadWrite  --approve
+
+kubectl create -f mysftpjob.yml
 
 ## Container Image
 From the ControlHub Server, build the Container Image using Podman and push it to Elastic Container Registry(ECR)
 Commands:
-> 
+>
+
+repoLink=$(aws ecr create-repository --repository-name \
+sftpdemo/sftpimage | jq -r .repository.repositoryUri)
+
+aws ecr get-login-password --region ap-south-1 | \
+podman login --username AWS --password-stdin $repoLink
+
+podman tag sftpimage:latest $repoLink:1.0
+podman push $repoLink:1.0
 
 
 ##
