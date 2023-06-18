@@ -102,7 +102,7 @@ Resources:
           DeviceIndex: '0'
           SubnetId: !ImportValue PublicSubnet2Id
           GroupSet:
-            - !ImportValue SecurityGroupId
+            - !ImportValue GroupId
       BlockDeviceMappings:
         - DeviceName: /dev/xvda
           Ebs:
@@ -167,7 +167,7 @@ Resources:
           DeviceIndex: '0'
           SubnetId: !ImportValue PublicSubnet2Id
           GroupSet:
-            - !ImportValue SecurityGroupId
+            - !ImportValue GroupId
       BlockDeviceMappings:
         - DeviceName: /dev/xvda
           Ebs:
