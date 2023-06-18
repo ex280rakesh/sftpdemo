@@ -27,18 +27,6 @@ Parameters:
     Default: gp2
 
 Resources:
-  MySecurityGroup2:
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-      GroupName: !Join [ "-", [ !Ref StackName, "SFTP-SG2" ] ]
-      GroupDescription: "Security Group for EC2 instance"
-      VpcId: !ImportValue VPCId
-      SecurityGroupIngress:
-        - IpProtocol: tcp
-          FromPort: 22
-          ToPort: 22
-          CidrIp: 0.0.0.0/0
-
 
   ControlHubIAMRole:
     Type: 'AWS::IAM::Role'
@@ -52,7 +40,7 @@ Resources:
               Service: ec2.amazonaws.com
             Action: sts:AssumeRole
       ManagedPolicyArns:
-        - arn:aws:iam::aws:policy/PowerUserAccess
+        - arn:aws:iam::aws:policy/AdministratorAccess
           
   EC2InstanceProfile:
     Type: 'AWS::IAM::InstanceProfile'
@@ -67,7 +55,7 @@ Resources:
       InstanceType: !Ref InstanceType
       ImageId: !Ref AMI
       IamInstanceProfile: !Ref EC2InstanceProfile
-      KeyName: Demonstration-sftp-keypair
+      KeyName: !ImportValue  KeyName
       Tags:
         - Key: Name
           Value: !Join [ "-", [ !Ref StackName, "ControlServer" ] ]
@@ -112,7 +100,7 @@ Resources:
           DeviceIndex: '0'
           SubnetId: !ImportValue PublicSubnet2Id
           GroupSet:
-            - !Ref MySecurityGroup2
+            - !ImportValue GroupId
       BlockDeviceMappings:
         - DeviceName: /dev/xvda
           Ebs:

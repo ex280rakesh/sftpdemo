@@ -1,0 +1,37 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: 'AWS CloudFormation template to create EC2 key pair and security group.'
+Parameters:
+  StackName:
+    Description: Name of the Stack
+    Type: String    
+    Default: Demonstration
+
+Resources:
+  EC2SecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Join [ "-", [ !Ref StackName, "SFTP-SG" ] ]
+      GroupDescription: "Security Group for EC2 instance"
+      VpcId: !ImportValue VPCId
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+
+  EC2KeyPair:
+    Type: AWS::EC2::KeyPair
+    Properties:
+      KeyName: !Join [ "-", [ !Ref StackName, "SFTP-keypair" ] ]
+
+Outputs:
+  SecurityGroupId:
+    Value: !Ref EC2SecurityGroup
+    Export:
+      Name: GroupId
+
+  KeyPairName:
+    Value: !Ref EC2KeyPair
+    Export:
+      Name: KeyName
+      

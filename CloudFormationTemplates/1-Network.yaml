@@ -6,7 +6,7 @@ Parameters:
     Type: String  
     Default: Demonstration
   Environment:
-    Description: Environment
+    Description: Environment - dev/test/prod
     Type: String   
     Default: dev
   VpcCidrBlock:

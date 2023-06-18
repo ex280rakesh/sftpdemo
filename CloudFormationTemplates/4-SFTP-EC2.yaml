@@ -15,7 +15,7 @@ Parameters:
     Default: t2.micro
   AMI:
     Type: String
-    Description: EC2 AMI ID 
+    Description: EC2 AMI ID (Amazon Linux 2)
     Default: ami-05afd67c4a44cc983
   EBSVolumeSize:
     Type: String
@@ -50,7 +50,7 @@ Resources:
     Properties:
       InstanceType: !Ref InstanceType
       ImageId: !Ref AMI
-      KeyName: !Ref EC2KeyPair
+      KeyName: !ImportValue  KeyName
       Tags:
         - Key: Name
           Value: !Join [ "-", [ !Ref StackName, "SFTP-Server1" ] ]
@@ -102,7 +102,7 @@ Resources:
           DeviceIndex: '0'
           SubnetId: !ImportValue PublicSubnet2Id
           GroupSet:
-            - !Ref MySecurityGroup
+            - !ImportValue SecurityGroupId
       BlockDeviceMappings:
         - DeviceName: /dev/xvda
           Ebs:
@@ -115,7 +115,7 @@ Resources:
     Properties:
       InstanceType: !Ref InstanceType
       ImageId: !Ref AMI
-      KeyName: !Ref EC2KeyPair
+      KeyName: !ImportValue  KeyName
       Tags:
         - Key: Name
           Value: !Join [ "-", [ !Ref StackName, "SFTP-Server2" ] ]
@@ -167,7 +167,7 @@ Resources:
           DeviceIndex: '0'
           SubnetId: !ImportValue PublicSubnet2Id
           GroupSet:
-            - !Ref MySecurityGroup
+            - !ImportValue SecurityGroupId
       BlockDeviceMappings:
         - DeviceName: /dev/xvda
           Ebs:
