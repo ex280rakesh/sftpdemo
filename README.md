@@ -1,25 +1,38 @@
 # Repository for Blog - Enable SFTP Integration for Containerized Apps on AWS
 
+## Cloud Formation Templates 
+The followingto create the basic stack requried for replicating the scenario
+
 Please execute the following Cloud Formation Templates(CFT) in respective order.
 
-## 1-Network.yaml
+### CloudFormationTemplates/1-Network.yaml
 This will create the network pre-requisites for the later resources.
 
-## 2- Pre-Requisites
-This is
+### CloudFormationTemplates/2-Pre-Requisites.yaml
+This will create the EC2 Key Pair, EC2 Security Group
 
-## 2-ControlHub.yaml
-This will create the Control Hub where you will run further
+### CloudFormationTemplates/3-ControlHub.yaml
+This will create the Control Hub where you will run further CFTs. PODMAN, AWS CLI, EKSCTL and KUBECTL command binaries will be installed. Create the EKS cluster from this machine.
 
-## 3-SFTP-EC2.yaml
+### CloudFormationTemplates/4-SFTP-EC2.yaml
+This will create 2 SFTP Servers on with Public IP address. Once the stack is created, the following things need to be done:
+    1. Fetch the IP address and create two entries `SFTPServer1` and `SFTPServer2` in SSM Parameter Store with the IP address of each of the servers.
+    2. Log into the servers and fetch the id_rsa private key for each of the server and create Secrets Manager entries `secret1-sftp-sshkey` and `secret2-sftp-sshkey`.
 
-## 4-EKSCluster.yaml
-Execute
+### CloudFormationTemplates/5-EKSCluster.yaml
+Execute this from the ControlHub Server for straightforward usage with EKSCTL and KUBECTL Commands.
+This will create the EKS Cluster and the EKS NodeGroups. Once the stack is created, execute the following commands to complete the setup.
+> 
 
-- `dev`: Contains the latest code **and it is the branch actively developed**. Note that **all PRs must be against the `dev` branch to be considered**. This branch is developed using `.NET 7`
-- `release/net-6`: Contains the code changes specific to the `.NET 6`
-- `release/net-5`: Contains the code changes specific to the `.NET 5`
-- `release/net-3.1.1`: Contains the code changes specific to the `.NET 3.1`
+## Container Image
+From the ControlHub Server, build the Container Image using Podman and push it to Elastic Container Registry(ECR)
+Commands:
+> 
 
-> [!DISCLAIMER]: The code shared here may not follow the security best practices. This is a tested and working code used in the blog. Use with proper due diligence. Not for Production use.
+
+##
+
+
+
+**DISCLAIMER:** The code shared here may not follow the security best practices. This is a tested and working code used in the blog. Use with proper due diligence. Not for Production use.
 

@@ -15,9 +15,9 @@ USER root
 ##Install pre-requisites
 #
 RUN yum install -y openssh-clients less unzip && \
-        curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awsc                                                                                                             liv2.zip" && \
-        unzip awscliv2.zip && ./aws/install && mkdir -p /staging && rm -f awscli                                                                                                             v2.zip && \
-        groupadd --gid $USER_GID $USERNAME && useradd --uid $USER_UID --gid $USE                                                                                                             R_GID -m $USERNAME && \
+        curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && \
+        unzip awscliv2.zip && ./aws/install && mkdir -p /staging && rm -f awscliv2.zip && \
+        groupadd --gid $USER_GID $USERNAME && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME && \
         yum remove -y unzip && yum clean all
 
 ##Copy the shell script files to the image
