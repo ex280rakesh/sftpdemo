@@ -31,7 +31,7 @@ Execute this from the ControlHub Server for straightforward usage with EKSCTL an
 This will create the EKS Cluster and the EKS NodeGroups. Once the stack is created, execute the following commands to complete the setup.
 > 
 
-kubectl create namespace mysftpdemo-ns
+kubectl create namespace sftpbatchjob-ns
 
 eksctl create iamserviceaccount --name my-eks-cluster-sa \
  --namespace sftpbatchjob-ns --cluster myekscluster --role-name "EKS-secrets-role" \ 

@@ -1,0 +1,32 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: sftp-batch-job
+  generateName: sftp-batch-job-deployments-
+  namespace: sftpbatchjob-ns
+  labels:
+    app: sftpbatchjob
+spec:
+  schedule: "*/5 * * * *"
+  failedJobsHistoryLimit: 5
+  successfulJobsHistoryLimit: 10
+  jobTemplate:
+    spec:
+      backoffLimit: 1
+      template:
+        metadata:
+          labels:
+            app: sftpbatchjob
+          annotations:
+            cluster-autoscaler.kubernetes.io/safe-to-evict: 'false'
+        spec:
+          serviceAccountName: my-eks-cluster-sa
+          restartPolicy: OnFailure
+          containers:
+          - name: sftpbatchjob
+            image: 675891407450.dkr.ecr.ap-south-1.amazonaws.com/sftpdemo/sftpimage:1.0
+            imagePullPolicy: Always
+            command:
+            - /bin/sh
+            - -c
+            - /scripts/sftpjob.sh

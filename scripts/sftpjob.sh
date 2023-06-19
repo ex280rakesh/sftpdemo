@@ -9,10 +9,10 @@ tmpKey1=~/.ssh/id_rsa1
 tmpKey2=~/.ssh/id_rsa2
 currentTime=$(date "+%Y.%m.%d-%H.%M.%S")
 localPath=/staging/$sampleFile
-remotePath=/data/$sampleFile
+remotePath=./data/$sampleFile
 sftpUser1=sftpuser
 sftpHost1=$(aws ssm get-parameter --name SFTPServer1 --query Parameter.Value --output text)
-sftpUser2=usersftp
+sftpUser2=sftpuser
 sftpHost2=$(aws ssm get-parameter --name SFTPServer2 --query Parameter.Value --output text)
 
 ##Private Key Setup; Fetch the SSH Private Key from AWS Secrets Manager
