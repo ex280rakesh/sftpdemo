@@ -3,6 +3,7 @@
 This repository contains the Cloud Formation Templates, and other assisting files to replicate the scenario in the blog:
 
 *Stack Architecture*
+
 ![Image](Images/SFTP-Container-AWS Architecture.png)
 
 
