@@ -7,32 +7,41 @@ This repository contains the Cloud Formation Templates, and other assisting file
 ![Image](./Images/SFTP-Container-AWS%20Architecture.png)
 
 
+Clone this repository to the local workstation and follow the instructions.
+
 ## Cloud Formation Templates 
 The following templates can be used to create the basic stack.
 
 Please execute the following Cloud Formation Templates(CFT) in respective order.
 
-### CloudFormationTemplates/1-Network.yaml
-This will create the network pre-requisites for the later resources.
+### CloudFormationTemplates/1-Network.yaml 
+This will create the network pre-requisites for the later resources. This will take less than 5 minutes to complete.
 
 ### CloudFormationTemplates/2-Pre-Requisites.yaml
-This will create the EC2 Key Pair, EC2 Security Group
+This will create the EC2 Key Pair, EC2 Security Group. This will take less than 5 minutes to complete.
 
 ### CloudFormationTemplates/3-ControlHub.yaml
-This will create the Control Hub where you will run further CFTs. PODMAN, AWS CLI, EKSCTL and KUBECTL command binaries will be installed. Create the EKS cluster from this machine.
+This will create the Control Hub where you will run further CFTs. PODMAN, AWS CLI, EKSCTL and KUBECTL command binaries will be installed. Create the EKS cluster from this machine. This will take about 5 minutes to complete.
 
 ### CloudFormationTemplates/4-SFTP-EC2.yaml
-This will create 2 SFTP Servers on with Public IP address. Once the stack is created, the following things need to be done:
+This will create 2 SFTP Servers on with Public IP address. This will take about 5 minutes to complete.
+
+Once the stack is created, the following things need to be done:
     1. Fetch the IP address and create two entries `SFTPServer1` and `SFTPServer2` in SSM Parameter Store with the IP address of each of the servers.
     2. Log into the servers and fetch the id_rsa private key for each of the server and create Secrets Manager entries `secret1-sftp-sshkey` and `secret2-sftp-sshkey`.
+    3. Connect to the SFTP Server(SFTPServer1) via sftp and place a file named 'testFile.dat' in the data folder. The container will fetch this file and push it to SFTPServer2
+
+    Note: there is a dummy password for the SFTP user in this CFT. You may want to change it.
 
 ### CloudFormationTemplates/5-EKSCluster.yaml
-Execute this from the ControlHub Server for straightforward usage with EKSCTL and KUBECTL Commands.
+Execute this from the ControlHub Server for straightforward usage with EKSCTL and KUBECTL Commands. 
 
 >  aws cloudformation create-stack --stack-name Demo-EKSCluster-Stack --template-body file://5-EKSCluster.yaml --capabilities CAPABILITY_NAMED_IAM
 
 
-This will create the EKS Cluster and the EKS NodeGroups. Once the stack is created, execute the following commands to complete the setup.
+This will create the EKS Cluster and the EKS NodeGroups. This will take about 15-20 minutes to complete.
+
+Once the stack is created, execute the following commands to complete the setup.
 
 > kubectl create namespace sftpbatchjob-ns
 
@@ -41,10 +50,9 @@ This will create the EKS Cluster and the EKS NodeGroups. Once the stack is creat
 > eksctl create iamserviceaccount --name eks-sftpbatchjob-sa --namespace sftpbatchjob-ns --cluster MyEKSCluster --region ap-south-1 --role-name "EKS-sftpjob-role" --attach-policy-arn 'arn:aws:iam::aws:policy/SecretsManagerReadWrite,arn:aws:iam::aws:policy/AmazonSSMReadOnlyAccess' --approve
 
 ## Container Image
-From the ControlHub Server, build the Container Image using Podman and push it to Elastic Container Registry(ECR)
-Commands:
+From the ControlHub Server, create an Elastic Container Registry (ECR), build the Container Image using Podman and push it to Registry.
+The following commands will help you:
 
-> podman build -t sftpimage .
 
 > repoLink=$(aws ecr create-repository --repository-name sftpdemo/sftpimage | jq -r .repository.repositoryUri)
 
