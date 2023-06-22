@@ -39,9 +39,13 @@ This will create the EKS Cluster and the EKS NodeGroups. Once the stack is creat
 From the ControlHub Server, build the Container Image using Podman and push it to Elastic Container Registry(ECR)
 Commands:
 
+> podman build -t sftpimage .
+
 > repoLink=$(aws ecr create-repository --repository-name sftpdemo/sftpimage | jq -r .repository.repositoryUri)
 
 > aws ecr get-login-password --region ap-south-1 | podman login --username AWS --password-stdin $repoLink
+
+> podman build -t sftpimage .
 
 > podman tag sftpimage:latest $repoLink:1.0
 
