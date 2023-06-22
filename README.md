@@ -31,13 +31,11 @@ Execute this from the ControlHub Server for straightforward usage with EKSCTL an
 This will create the EKS Cluster and the EKS NodeGroups. Once the stack is created, execute the following commands to complete the setup.
 > 
 
-kubectl create namespace sftpbatchjob-ns
+> kubectl create namespace sftpbatchjob-ns
 
-eksctl create iamserviceaccount --name my-eks-cluster-sa \
- --namespace sftpbatchjob-ns --cluster myekscluster --role-name "EKS-secrets-role" \ 
---attach-policy-arn arn:aws:iam::aws:policy/SecretsManagerReadWrite  --approve
+> eksctl utils associate-iam-oidc-provider --cluster MyEKSCluster --region ap-south-1 --approve
 
-kubectl create -f mysftpjob.yml
+> eksctl create iamserviceaccount --name eks-sftpbatchjob-sa --namespace sftpbatchjob-ns --cluster MyEKSCluster --role-name "EKS-sftpjob-role" --attach-policy-arn 'arn:aws:iam::aws:policy/SecretsManagerReadWrite,arn:aws:iam::aws:policy/AmazonSSMReadOnlyAccess' --approve
 
 ## Container Image
 From the ControlHub Server, build the Container Image using Podman and push it to Elastic Container Registry(ECR)
@@ -54,8 +52,15 @@ podman tag sftpimage:latest $repoLink:1.0
 podman push $repoLink:1.0
 
 
-##
+## Create the Kubernetes CronJob
 
+Once the setup is complete, create the CronJob from the yaml file.
+
+> kubectl create -f sftpbatchjob.yaml
+
+> kubectl get all --namespace sftpbatchjob-ns
+
+ssm:GetParameter
 
 
 **DISCLAIMER:** The code shared here may not follow the security best practices. This is a tested and working code used in the blog. Use with proper due diligence. Not for Production use.

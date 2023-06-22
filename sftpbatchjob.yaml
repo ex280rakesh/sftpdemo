@@ -20,7 +20,7 @@ spec:
           annotations:
             cluster-autoscaler.kubernetes.io/safe-to-evict: 'false'
         spec:
-          serviceAccountName: my-eks-cluster-sa
+          serviceAccountName: eks-sftpbatchjob-sa
           restartPolicy: OnFailure
           containers:
           - name: sftpbatchjob
