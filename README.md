@@ -29,27 +29,25 @@ Execute this from the ControlHub Server for straightforward usage with EKSCTL an
 
 
 This will create the EKS Cluster and the EKS NodeGroups. Once the stack is created, execute the following commands to complete the setup.
-> 
 
 > kubectl create namespace sftpbatchjob-ns
 
 > eksctl utils associate-iam-oidc-provider --cluster MyEKSCluster --region ap-south-1 --approve
 
-> eksctl create iamserviceaccount --name eks-sftpbatchjob-sa --namespace sftpbatchjob-ns --cluster MyEKSCluster --role-name "EKS-sftpjob-role" --attach-policy-arn 'arn:aws:iam::aws:policy/SecretsManagerReadWrite,arn:aws:iam::aws:policy/AmazonSSMReadOnlyAccess' --approve
+> eksctl create iamserviceaccount --name eks-sftpbatchjob-sa --namespace sftpbatchjob-ns --cluster MyEKSCluster --region ap-south-1 --role-name "EKS-sftpjob-role" --attach-policy-arn 'arn:aws:iam::aws:policy/SecretsManagerReadWrite,arn:aws:iam::aws:policy/AmazonSSMReadOnlyAccess' --approve
 
 ## Container Image
 From the ControlHub Server, build the Container Image using Podman and push it to Elastic Container Registry(ECR)
 Commands:
->
 
-repoLink=$(aws ecr create-repository --repository-name \
+> repoLink=$(aws ecr create-repository --repository-name \
 sftpdemo/sftpimage | jq -r .repository.repositoryUri)
 
-aws ecr get-login-password --region ap-south-1 | \
+> aws ecr get-login-password --region ap-south-1 | \
 podman login --username AWS --password-stdin $repoLink
 
-podman tag sftpimage:latest $repoLink:1.0
-podman push $repoLink:1.0
+> podman tag sftpimage:latest $repoLink:1.0
+> podman push $repoLink:1.0
 
 
 ## Create the Kubernetes CronJob
@@ -60,8 +58,12 @@ Once the setup is complete, create the CronJob from the yaml file.
 
 > kubectl get all --namespace sftpbatchjob-ns
 
-ssm:GetParameter
+Monitor for job completion and view the results via pod logs.
+
+> kubectl logs pod/sftp-batch-job-28123515-blc4n --namespace sftpbatchjob-ns
 
 
-**DISCLAIMER:** The code shared here may not follow the security best practices. This is a tested and working code used in the blog. Use with proper due diligence. Not for Production use.
+
+
+**DISCLAIMER:** The code shared here may not follow the security best practices. This is a tested and working code used in the blog. Use with proper due diligence. Not for Production use. Please perform necessary cleanup via Stack deletion to avoid recurring costs.
 
