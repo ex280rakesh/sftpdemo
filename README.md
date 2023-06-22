@@ -4,7 +4,7 @@ This repository contains the Cloud Formation Templates, and other assisting file
 
 *Stack Architecture*
 
-![Image](./Images/SFTP-Container-AWS Architecture.png)
+![Image](./Images/SFTP-Container-AWS%20Architecture.png)
 
 
 ## Cloud Formation Templates 
