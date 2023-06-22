@@ -1,9 +1,13 @@
 # Repository for Blog - Enable SFTP Integration for Containerized Apps on AWS
 
+This repository contains the Cloud Formation Templates, and other assisting files to replicate the scenario in the blog:
+
+*Stack Architecture*
+![Image](Images/SFTP-Container-AWS Architecture.png)
 
 
 ## Cloud Formation Templates 
-The following templates can be used to create the basic stack requried for replicating the scenario
+The following templates can be used to create the basic stack.
 
 Please execute the following Cloud Formation Templates(CFT) in respective order.
 
