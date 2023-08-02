@@ -34,14 +34,12 @@ Note:
 This will create an SFTP Server (SFTPServer2) with a Public IP address. This will take about 5 minutes to complete.
 
 Note: 
- 1. This stack uses an ami from ap-southeast-1. If you are selecting any other region, you should change the ami id
+ 1. This stack uses an ami from ap-south-1. If you are selecting any other region, you should change the ami id
 
 Once the above stacks are created, the following things need to be done:
 
-    1. Fetch the IP address and create two entries `SFTPServer1` and `SFTPServer2` in SSM Parameter Store with the IP address of each of the servers.
-    
+    1. Fetch the IP address and create two entries `SFTPServer1` and `SFTPServer2` in SSM Parameter Store with the IP address of each of the servers.    
     2. Log into the servers and fetch the id_rsa private key for each of the server and create Secrets Manager entries `secret1-sftp-sshkey` and `secret2-sftp-sshkey`.
-    
     3. Connect to the SFTP Server(SFTPServer1) via sftp and place a file named 'testFile.dat' in the data folder. The container will fetch this file and push it to SFTPServer2
 
 ### CloudFormationTemplates/5-EKSCluster.yaml
