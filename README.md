@@ -21,7 +21,9 @@ This will create the network pre-requisites for the later resources. This will t
 This will create the EC2 Key Pair, EC2 Security Group. This will take less than 5 minutes to complete.
 
 ### CloudFormationTemplates/3-ControlHub.yaml
-This will create the Control Hub where you will run further CFTs. PODMAN, AWS CLI, EKSCTL and KUBECTL command binaries will be installed. Create the EKS cluster from this machine. This will take about 5 minutes to complete.
+This will create the Control Hub where you will run further CFTs. PODMAN, AWS CLI, EKSCTL and KUBECTL command binaries will be installed. This will take about 5 minutes to complete.
+
+Once the stack is created, log into the ControlHub server and Create the EKS cluster.
 
 ### CloudFormationTemplates/4a-SFTP-EC2.yaml
 This will create an SFTP Server (SFTPServer1) with a Public IP address. This will take about 5 minutes to complete.
