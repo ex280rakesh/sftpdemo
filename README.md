@@ -23,8 +23,6 @@ This will create the EC2 Key Pair, EC2 Security Group. This will take less than 
 ### CloudFormationTemplates/3-ControlHub.yaml
 This will create the Control Hub where you will run further CFTs. PODMAN, AWS CLI, EKSCTL and KUBECTL command binaries will be installed. This will take about 5 minutes to complete.
 
-Once the stack is created, log into the ControlHub server and Create the EKS cluster.
-
 ### CloudFormationTemplates/4a-SFTP-EC2.yaml
 This will create an SFTP Server (SFTPServer1) with a Public IP address. This will take about 5 minutes to complete.
 
@@ -43,10 +41,10 @@ Once the above stacks are created, the following things need to be done:
 
     1. Fetch the IP address and create two entries `SFTPServer1` and `SFTPServer2` in SSM Parameter Store with the IP address of each of the servers.    
     2. Log into the servers and fetch the id_rsa private key for each of the server and create Secrets Manager entries `secret1-sftp-sshkey` and `secret2-sftp-sshkey`.
-    3. Connect to the SFTP Server(SFTPServer1) via sftp and place a file named 'testFile.dat' in the data folder. The container will fetch this file and push it to SFTPServer2
+    3. Connect to the SFTP Server(SFTPServer1) via sftp and place a file named 'testFile.dat' in the data folder. The batch job when its run will fetch this file and push it to SFTPServer2
 
 ### CloudFormationTemplates/5-EKSCluster.yaml
-Execute this from the ControlHub Server for straightforward usage with EKSCTL and KUBECTL Commands. 
+Log into the ControlHub Server and execute this for straightforward usage with EKSCTL and KUBECTL Commands. 
 
 >  aws cloudformation create-stack --stack-name Demo-EKSCluster-Stack --template-body file://5-EKSCluster.yaml --capabilities CAPABILITY_NAMED_IAM
 
