@@ -35,6 +35,7 @@ This will create an SFTP Server (SFTPServer2) with a Public IP address. This wil
 
 Note: 
  1. This stack uses an ami from ap-south-1. If you are selecting any other region, you should change the ami id
+ 2. There is a dummy password for the SFTP user in this CFT. You may want to change it.
 
 Once the above stacks are created, the following things need to be done:
 
