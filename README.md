@@ -9,6 +9,10 @@ This repository contains the Cloud Formation Templates, and other assisting file
 
 Clone this repository to the local workstation and follow the instructions.
 
+Note: 
+1. This example uses ap-southeast-1 as Region-1 and ap-south as Region-2. However you are free to choose any other regions for running this sample
+2. The example uses AWS Linux AMIs and the ids are hard-coded in the CFTs. Since the AMIs are region specific, the AMI ids needs to be changed in the CFTs if you choose different regions than the above
+
 ## Cloud Formation Templates 
 The following templates can be used to create the basic stack.
 
