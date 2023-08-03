@@ -1,0 +1,93 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: 'AWS CloudFormation template to create 2 EC2 instances with SFTP Server configured and its related key pair and security group. Dependent on CFT = Network.yaml'
+Parameters:
+  StackName:
+    Description: Name of the Stack
+    Type: String    
+    Default: Demonstration
+  Environment:
+    Description: Environment - dev/test/prod
+    Type: String 
+    Default: dev
+  InstanceType:
+    Type: String
+    Description: EC2 instance type - t2.micro, m5.large etc.
+    Default: t2.micro
+  AMI:
+    Type: String
+    Description: EC2 AMI ID (Amazon Linux 2)
+    Default: ami-05afd67c4a44cc983
+  EBSVolumeSize:
+    Type: String
+    Description: Size of the EBS volume in GB
+    Default: 20
+  EBSVolumeType:
+    Type: String
+    Description: Type of the EBS volume (gp2/gp3/io1/sc1/st1)
+    Default: gp2
+
+Resources:
+  EC2Instance2:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: !Ref InstanceType
+      ImageId: !Ref AMI
+      KeyName: !ImportValue  KeyName
+      Tags:
+        - Key: Name
+          Value: !Join [ "-", [ !Ref StackName, "SFTP-Server2" ] ]
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: Region
+          Value: !Ref 'AWS::Region'
+      UserData:
+        Fn::Base64: 
+          !Sub |    
+            #!/bin/bash
+
+            #assignments
+            uName="sftpuser"
+            gName="sftpgroup"
+            pWord="Ch@NG3m3n0W"
+            hDir="/home/sftpuser"
+            cRoot="/sftp"
+            fRoot="/data"
+            sKey="id_rsa"
+            pKey="id_rsa.pub"
+            echo "1 - Setting up user account..."
+            groupadd "$gName"
+            useradd "$uName" -m -g "$gName"
+            echo "$pWord\n$pWord" | passwd --stdin "$uName"
+            echo "2 - Creating FTP root folder"
+            sudo mkdir -p $cRoot$fRoot
+            chmod 755 $fRoot
+            chown $uName:$gName $cRoot$fRoot
+            echo "3 - Setup passwordless auth"
+            mkdir -p $hDir/.ssh
+            chmod 700 $hDir/.ssh
+            ssh-keygen -f $hDir/.ssh/$sKey -t rsa -N ""
+            cat $hDir/.ssh/$pKey > $hDir/.ssh/authorized_keys
+            chmod 600 $hDir/.ssh/authorized_keys
+            chown -R $uName:$gName $hDir/.ssh
+            echo "4 - Setup SSHD Configuration for SFTP"
+            sed -e '/Subsystem/s/^#*/#/g' -i /etc/ssh/sshd_config
+            echo "Subsystem   sftp    internal-sftp" >> /etc/ssh/sshd_config
+            echo "Match Group sftpgroup" >> /etc/ssh/sshd_config
+            echo "ChrootDirectory $cRoot" >> /etc/ssh/sshd_config
+            echo "X11Forwarding no" >> /etc/ssh/sshd_config
+            echo "AllowTCPForwarding no" >> /etc/ssh/sshd_config
+            echo "ForceCommand internal-sftp" >> /etc/ssh/sshd_config
+            service sshd restart
+
+      NetworkInterfaces:
+        - AssociatePublicIpAddress: true
+          DeviceIndex: '0'
+          SubnetId: !ImportValue PublicSubnet2Id
+          GroupSet:
+            - !ImportValue GroupId
+      BlockDeviceMappings:
+        - DeviceName: /dev/xvda
+          Ebs:
+            VolumeSize: !Ref EBSVolumeSize
+            VolumeType: !Ref EBSVolumeType
+            DeleteOnTermination: "true"
