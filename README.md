@@ -63,6 +63,8 @@ This will create the EKS Cluster and the EKS NodeGroups. This will take about 15
 
 Once the stack is created, execute the following commands to complete the setup.
 
+> aws eks update-kubeconfig --region ap-south-1 --name MyEKSCluster
+
 > kubectl create namespace sftpbatchjob-ns
 
 > eksctl utils associate-iam-oidc-provider --cluster MyEKSCluster --region ap-south-1 --approve
@@ -87,13 +89,13 @@ The following commands will help you:
 
 ## Create the Kubernetes CronJob
 
-Once the setup is complete, create the CronJob from the yaml file.
+Once the setup is complete, create the CronJob from the yaml file. Update the image key in the "sftpbatchjob.yaml" with the image URI from the AWS ECR repository
 
 > kubectl create -f sftpbatchjob.yaml
 
 > kubectl get all --namespace sftpbatchjob-ns
 
-Monitor for job completion and view the results via pod logs.
+Monitor for job completion and view the results via pod logs. The actual pod name (below) could be different
 
 > kubectl logs pod/sftp-batch-job-28123515-blc4n --namespace sftpbatchjob-ns
 
