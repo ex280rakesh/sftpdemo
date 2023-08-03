@@ -54,7 +54,7 @@ Log into the ControlHub Server and install git and jq in the ControlHub Server. 
 
 > git clone https://github.com/ex280rakesh/sftpdemo.git
 
-Now cd into the sftpdemo directory and execute this for straightforward usage with EKSCTL and KUBECTL Commands. 
+Now cd into the sftpdemo/CloudFormationTemplates directory and execute this for straightforward usage with EKSCTL and KUBECTL Commands. 
 
 >  aws cloudformation create-stack --stack-name Demo-EKSCluster-Stack --template-body file://5-EKSCluster.yaml --capabilities CAPABILITY_NAMED_IAM
 
