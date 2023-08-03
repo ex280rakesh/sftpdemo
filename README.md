@@ -48,7 +48,12 @@ Once the above stacks are created, the following things need to be done:
     3. Connect to the SFTP Server(SFTPServer1) via sftp and place a file named 'testFile.dat' in the data folder. The batch job when its run will fetch this file and push it to SFTPServer2
 
 ### CloudFormationTemplates/5-EKSCluster.yaml
-Log into the ControlHub Server and execute this for straightforward usage with EKSCTL and KUBECTL Commands. 
+Log into the ControlHub Server and install git and jq in the ControlHub Server. Now clone the repo
+
+> sudo yum install git jq
+> git clone https://github.com/ex280rakesh/sftpdemo.git
+
+Now cd into the sftpdemo directory and execute this for straightforward usage with EKSCTL and KUBECTL Commands. 
 
 >  aws cloudformation create-stack --stack-name Demo-EKSCluster-Stack --template-body file://5-EKSCluster.yaml --capabilities CAPABILITY_NAMED_IAM
 
