@@ -19,23 +19,23 @@ The following templates can be used to create the basic stack.
 Please execute the following Cloud Formation Templates(CFT) in respective order.
 
 ### CloudFormationTemplates/1-Network.yaml 
-This will create the network pre-requisites for the later resources. This will take less than 5 minutes to complete.
+Please run this stack in both the regions. This will create the network pre-requisites for the later resources. This will take less than 5 minutes to complete.
 
 ### CloudFormationTemplates/2-Pre-Requisites.yaml
-This will create the EC2 Key Pair, EC2 Security Group. This will take less than 5 minutes to complete.
+Please run this stack in both the regions. This will create the EC2 Key Pair, EC2 Security Group. This will take less than 5 minutes to complete.
 
 ### CloudFormationTemplates/3-ControlHub.yaml
-This will create the Control Hub where you will run further CFTs. PODMAN, AWS CLI, EKSCTL and KUBECTL command binaries will be installed. This will take about 5 minutes to complete.
+This stack needs to be run in Region-2 only. This will create the Control Hub where you will run further CFTs. PODMAN, AWS CLI, EKSCTL and KUBECTL command binaries will be installed. This will take about 5 minutes to complete.
 
 ### CloudFormationTemplates/4a-SFTP-EC2.yaml
-This will create an SFTP Server (SFTPServer1) with a Public IP address. This will take about 5 minutes to complete.
+This stack needs to be run in Region-1 only. This will create an SFTP Server (SFTPServer1) with a Public IP address in Region-1. This will take about 5 minutes to complete.
 
 Note: 
  1. This stack uses an ami from ap-southeast-1. If you are selecting any other region, you should change the ami id
  2. There is a dummy password for the SFTP user in this CFT. You may want to change it.
 
 ### CloudFormationTemplates/4b-SFTP-EC2.yaml
-This will create an SFTP Server (SFTPServer2) with a Public IP address. This will take about 5 minutes to complete.
+This stack needs to be run in Region-2 only. This will create an SFTP Server (SFTPServer2) with a Public IP address in Region-2. This will take about 5 minutes to complete.
 
 Note: 
  1. This stack uses an ami from ap-south-1. If you are selecting any other region, you should change the ami id
