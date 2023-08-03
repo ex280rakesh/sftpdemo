@@ -51,6 +51,7 @@ Once the above stacks are created, the following things need to be done:
 Log into the ControlHub Server and install git and jq in the ControlHub Server. Now clone the repo
 
 > sudo yum install git jq
+
 > git clone https://github.com/ex280rakesh/sftpdemo.git
 
 Now cd into the sftpdemo directory and execute this for straightforward usage with EKSCTL and KUBECTL Commands. 
