@@ -31,14 +31,14 @@ This stack needs to be run in Region-2 only. This will create the Control Hub wh
 This stack needs to be run in Region-1 only. This will create an SFTP Server (SFTPServer1) with a Public IP address in Region-1. This will take about 5 minutes to complete.
 
 Note: 
- 1. This stack uses an ami from ap-southeast-1. If you are selecting any other region, you should change the ami id
+ 1. This stack uses an AMI from ap-southeast-1. If you are selecting any other region, you should change the AMI id
  2. There is a dummy password for the SFTP user in this CFT. You may want to change it.
 
 ### CloudFormationTemplates/4b-SFTP-EC2.yaml
 This stack needs to be run in Region-2 only. This will create an SFTP Server (SFTPServer2) with a Public IP address in Region-2. This will take about 5 minutes to complete.
 
 Note: 
- 1. This stack uses an ami from ap-south-1. If you are selecting any other region, you should change the ami id
+ 1. This stack uses an AMI from ap-south-1. If you are selecting any other region, you should change the AMI id
  2. There is a dummy password for the SFTP user in this CFT. You may want to change it.
 
 Once the above stacks are created, the following things need to be done:
