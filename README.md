@@ -99,6 +99,12 @@ Monitor for job completion and view the results via pod logs. The actual pod nam
 
 > kubectl logs pod/sftp-batch-job-28123515-blc4n --namespace sftpbatchjob-ns
 
+## Cleanup
+
+Once you have tested the job, please proceed to clean up the resources created
+
+1.	Delete the Stacks created in Region-1 and Region-2
+2.	Delete the Secret Manager Keys
 
 
 
